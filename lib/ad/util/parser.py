@@ -34,6 +34,18 @@ class Parser(object):
 
     _write_parsetab = classmethod(_write_parsetab)
 
+
+    ''' comment out tabmodule keyword argument.
+    we don't write these to disk anyway, and it avoids
+
+if parsetab._tabversion != __tabversion__:
+   AttributeError: 'module' object has no attribute '_tabversion'
+
+   I don't have time to fix this right now, and we 
+   don't care about writing out parse tables in the 
+   first place
+    '''
+
     def parse(self, input, fname=None):
         lexer = lex.lex(object=self)
         if hasattr(input, 'read'):
@@ -42,7 +54,7 @@ class Parser(object):
         self.m_input = input
         self.m_fname = fname
         parser = yacc.yacc(module=self, debug=0,
-                           tabmodule=self._parsetab_name(),
+#                          tabmodule=self._parsetab_name(),
                            write_tables=0)
         parsed = parser.parse(lexer=lexer, tracking=True)
         return parsed
